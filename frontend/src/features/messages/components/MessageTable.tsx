@@ -70,7 +70,7 @@ export const MessageTable = ({
                                 <div className="flex justify-end gap-2">
                                     <Button
                                         variant="outline"
-                                        size="icon"
+                                        size="sm"
                                         onClick={() => onEdit(m)}
                                         title="Edytuj"
                                     >
@@ -78,7 +78,7 @@ export const MessageTable = ({
                                     </Button>
                                     <Button
                                         variant="destructive"
-                                        size="icon"
+                                        size="sm"
                                         onClick={() => onDelete(m.id)}
                                         disabled={deleting}
                                         title="Usuń"

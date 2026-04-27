@@ -1,7 +1,3 @@
-import * as React from "react";
-import { Message } from "../messagesApi";
-import { Button } from "../../../components/ui/button/button";
-import { Pencil, Trash2, Loader2 } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -9,88 +5,67 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "../../../components/ui/table/index";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
-type Props = {
-    messages: Message[];
-    isLoading: boolean;
-    isError: boolean;
-    onEdit: (message: Message) => void;
-    onDelete: (id: number) => void;
-    deleting: boolean;
-};
-
-export const MessageTable = ({
+export default function MessagesTable({
     messages,
     isLoading,
-    isError,
+    deleting,
     onEdit,
     onDelete,
-    deleting,
-}: Props) => {
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                <span>Ładowanie danych...</span>
-            </div>
-        );
-    }
-
-    if (isError) {
-        return (
-            <div className="p-4 text-red-500 border border-red-200 rounded bg-red-50">
-                Wystąpił błąd podczas ładowania wiadomości.
-            </div>
-        );
-    }
-
+}: any) {
+    if (isLoading) return <p className="p-4 text-center">loading...</p>;
+    useEffect(() => {
+        console.log("TABLE DATA:", messages);
+    }, [messages]);
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Wiadomość</TableHead>
-                    <TableHead className="text-right">Akcje</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {messages.length === 0 ? (
+        <div className="card container highlight">
+            <Table>
+                <TableHeader>
                     <TableRow>
-                        <TableCell colSpan={3} className="text-center py-8 text-gray-500">
-                            Brak dostępnych wiadomości
-                        </TableCell>
+                        <TableHead className="w-[100px]">ID</TableHead>
+                        <TableHead>content</TableHead>
+                        <TableHead className="text-right">Akcje</TableHead>
                     </TableRow>
-                ) : (
-                    messages.map((m) => (
-                        <TableRow key={m.id}>
-                            <TableCell className="font-medium">{m.id}</TableCell>
-                            <TableCell>{m.content}</TableCell>
-                            <TableCell className="text-right">
-                                <div className="flex justify-end gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => onEdit(m)}
-                                        title="Edytuj"
-                                    >
-                                        <Pencil className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        size="sm"
-                                        onClick={() => onDelete(m.id)}
-                                        disabled={deleting}
-                                        title="Usuń"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
+                </TableHeader>
+                <TableBody>
+                    {messages.length > 0 ? (
+                        messages.map((msg: any) => (
+                            <TableRow key={msg.id}>
+                                <TableCell className="font-medium">{msg.id}</TableCell>
+                                <TableCell>{msg.content}</TableCell>
+                                <TableCell className="text-right">
+                                    <div className="flex justify-end gap-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onEdit(msg)}
+                                        >
+                                            edit
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            disabled={deleting}
+                                            onClick={() => onDelete(msg.id)}
+                                        >
+                                            delete
+                                        </Button>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={3} className="h-24 text-center">
+                                Brak wiadomości.
                             </TableCell>
                         </TableRow>
-                    ))
-                )}
-            </TableBody>
-        </Table>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
     );
-};
+}

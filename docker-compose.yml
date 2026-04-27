@@ -1,0 +1,67 @@
+services:
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - "8081:80"
+    networks:
+      - backend
+
+  db:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: interview123
+      MYSQL_DATABASE: interview 
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+    volumes:
+      - db-vol:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    container_name: backend_api
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: >
+      sh -c "sleep 30 && 
+             npx sequelize-cli db:migrate && 
+             npx sequelize-cli db:seed:all && 
+             npm run start"
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - db
+
+  frontend:
+    container_name: biznesport-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api
+      - PORT=3000
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    command: ["npm", "run", "dev", "--", "--hostname", "0.0.0.0", "--port", "3000"]
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+networks:
+  backend:
+
+volumes:
+  db-vol:

@@ -30,31 +30,25 @@ export const useMessages = () => {
     const [state, dispatch] = useReducer(appReducer, initialState);
     const { newContent, newError, editingMessage, editContent, editError } = state;
 
-    const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
 
-        const error = validateMessage(newContent);
-        dispatch({ type: "setNewError", payload: error });
-
-        if (error) return;
-
-        await addMessage({ content: newContent.trim() }).unwrap();
+    const handleAdd = async (data: { content: string }) => {
+        console.log("BEFORE MUTATION");
+        await addMessage({ content: data.content }).unwrap();
+        console.log("AFTER MUTATION");
         dispatch({ type: "resetNewForm" });
     };
 
-    const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleEdit = async (data: { content: string }) => {
         if (!editingMessage) return;
 
-        const error = validateMessage(editContent);
+        const error = validateMessage(data.content);
         dispatch({ type: "setEditError", payload: error });
 
         if (error) return;
 
         await updateMessage({
             id: editingMessage.id,
-            content: editContent.trim()
+            content: data.content.trim()
         }).unwrap();
 
         dispatch({ type: "resetEditForm" });
@@ -67,12 +61,16 @@ export const useMessages = () => {
         await deleteMessage(id).unwrap();
     };
 
-    const openEdit = (message: Message) =>
-        dispatch({ type: "openEdit", payload: message });
+    const openEdit = (message: Message) => {
+        dispatch({
+            type: "openEdit",
+            payload: message
+        });
+    };
 
-    const closeEdit = () =>
+    const closeEdit = () => {
         dispatch({ type: "closeEdit" });
-
+    };
     return {
         messages,
         isLoading,

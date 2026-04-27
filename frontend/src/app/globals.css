@@ -1,75 +1,116 @@
- :root {
-   --background: #0b0f19;
-   --foreground: #e5e7eb;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-   --primary: #3b82f6;
-   --primary-hover: #2563eb;
+/* =========================
+   ROOT VARIABLES (CUSTOM)
+========================= */
+:root {
+  --primary: 221.2 83.2% 53.3%;
+  --primary-hover: 221.2 83.2% 45%;
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
 
-   --card: #111827;
-   --border: #1f2937;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
 
-   --success: #22c55e;
-   --error: #ef4444;
- }
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 35 91% 61%;
+  /* orange focus */
 
- * {
-   box-sizing: border-box;
-   margin: 0;
-   padding: 0;
- }
+  --success: 142.1 76.2% 36.3%;
+  --error: 0 84.2% 60.2%;
 
- html,
- body {
-   height: 100%;
- }
+  --radius: 0.5rem;
+}
 
- body {
-   background: var(--background);
-   color: var(--foreground);
-   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-   line-height: 1.5;
- }
+/* =========================
+   BASE RESET
+========================= */
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
 
- /* linki */
- a {
-   color: inherit;
-   text-decoration: none;
- }
+  html,
+  body {
+    height: 100%;
+  }
 
- /* przyciski */
- button {
-   font: inherit;
-   cursor: pointer;
- }
+  body {
+    @apply bg-background text-foreground;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+      Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    line-height: 1.5;
+  }
 
- /* inputy */
- input,
- textarea {
-   font: inherit;
-   outline: none;
- }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
- /* proste utility */
- .container {
-   max-width: 1100px;
-   margin: 0 auto;
-   padding: 24px;
- }
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
 
- /* card base (jeśli nie używasz UI library) */
- .card {
-   background: var(--card);
-   border: 1px solid var(--border);
-   border-radius: 12px;
-   padding: 16px;
- }
+  input,
+  textarea {
+    font: inherit;
+  }
+}
 
- /* states */
- .success {
-   color: var(--success);
- }
+/* =========================
+   UTILITIES
+========================= */
+@layer utilities {
+  .highlight {
+    outline: 2px solid #f59e42 !important;
+    box-shadow: 0 0 8px #f59e42;
+  }
 
- .error {
-   color: var(--error);
- }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+}
+
+/* =========================
+   COMPONENTS (optional)
+========================= */
+@layer components {
+  .card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .success {
+    color: hsl(var(--success));
+  }
+
+  .error {
+    color: hsl(var(--error));
+  }
+}
+
+/* =========================
+   DARK MODE (shadcn style)
+========================= */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+
+  --primary: 210 40% 98%;
+  --ring: 215 20.2% 65.1%;
+}

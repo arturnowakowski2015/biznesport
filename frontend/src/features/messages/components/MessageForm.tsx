@@ -1,46 +1,48 @@
-import { FormEvent } from "react";
-import { Button } from "../../../components/ui/button/button";
-import { Textarea } from "../../../components/ui/textarea/textarea";
-import { Label } from "../../../components/ui/label/label";
+"use client";
 
-type Props = {
-    value: string;
-    error?: string;
-    isLoading: boolean;
-    maxLength: number;
-    onChange: (value: string) => void;
-    onSubmit: (e: FormEvent<HTMLFormElement>) => void;
-};
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { messageSchema, MessageFormValues } from "../schema/messageSchema";
+import { useEffect } from "react";
 
-export const MessageForm = ({
-    value,
-    error,
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+
+export default function MessageForm({
+    defaultValue = "",
+    onSubmit,
     isLoading,
-    maxLength,
-    onChange,
-    onSubmit
-}: Props) => {
+}: {
+    defaultValue?: string;
+    onSubmit: (data: MessageFormValues) => void;
+    isLoading?: boolean;
+}) {
+    const form = useForm({
+        resolver: zodResolver(messageSchema),
+        defaultValues: {
+            content: "",
+        },
+    });
+    const handleSubmit = async (data: { content: string; }) => {
+        await onSubmit(data);
+        form.reset({ content: "" }); // 🔥 czyszczenie inputa
+    };
+    useEffect(() => {
+        form.reset({ content: defaultValue });
+    }, [defaultValue]);
+
     return (
-        <form onSubmit={onSubmit}>
-            <Label htmlFor="message-content">Nowa wiadomosc</Label>
-
-            <Textarea
-                id="message-content"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                maxLength={maxLength}
-                placeholder="Wpisz tresc wiadomosci..."
-            />
-
-            {error && <p style={{ color: "red" }}>{error}</p>}
-
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{value.length}/{maxLength}</span>
-
-                <Button disabled={isLoading} type="submit">
-                    {isLoading ? "Dodawanie..." : "Dodaj"}
-                </Button>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <div className="flex justify-center">
+                <Textarea
+                    {...form.register("content")}
+                    placeholder="write message..."
+                />
             </div>
+
+            <Button type="submit" className="w-full mt-3" disabled={isLoading}>
+                {isLoading ? "saving.." : "Zapisz"}
+            </Button>
         </form>
     );
-};
+}
